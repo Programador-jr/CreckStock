@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crek Stock</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="loader.css">
+  <script src="https://kit.fontawesome.com/5b482c0696.js" crossorigin="anonymous"></script>
+  <script src="index.js" defer></script>
+const { getUserInfo } = require("@replit/repl-auth")
+const { getUserInfo } = require("@replit/repl-auth")
+</head>
+<body>
+<div id="loading-overlay">
+  <div class="loading-spinner">
+    <div class="pizza-crek"></div>
+  </div>
+</div>
+	<nav>
+  <h1 class="text-center"><span class="crek">Crek</span><span class="stock-text">Stock</span></h1>
+	</nav>
+  <div class="container my-3">
+    <button id="add-item-btn" class="btn btn-success" onclick="showAddPopup()"><i class="fas fa-plus"></i> Adicionar Item</button>
+  </div>
+
+  <div class="container my-3">
+    <div class="row">
+		<div class="col-md-4">
+		  <form id="filter-form">
+		    <input type="text" id="filter-name" class="form-control" placeholder="Filtrar por nome">
+		  </form>
+		</div>
+
+      <div class="col-md-4">
+        <select id="filter-category" class="form-select">
+          <option value="">Filtrar por categoria</option>
+          <option value="Doces">Doces</option>
+          <option value="Salgados">Salgados</option>
+					<option value="Carnes">Carnes</option>
+					<option value="Temperos">Temperos</option>
+					<option value="Frutas">Frutas</option>
+					<option value="Geleias">Geleias</option>
+					<option value="Conservas">Conservas</option>
+					<option value="Congelados">Congelados</option>
+          <option value="Produtos de Limpeza">Produtos de Limpeza</option>
+          <option value="Bebidas">Bebidas</option>
+          <option value="Gerais">Gerais</option>
+          <option value="Queijos">Queijos</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <button id="filter-btn" class="btn btn-success" onclick="filterItems()"><i class="fas fa-filter"></i> Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <table id="stock-table" class="table">
+      <thead>
+        <tr>
+          <th scope="col">Produto</th>
+          <th scope="col">Quantidade</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Ação</th>
+        </tr>
+      </thead>
+      <tbody id="stock-body">
+        <!-- Aqui serão adicionadas as linhas da tabela dinamicamente -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Popups -->
+<div id="low-quantity-alert" class="popup">
+  <h2>Atenção!! Esses produtos estão com a quantidade baixa:</h2>
+  <ul id="low-quantity-list"></ul>
+  <button onclick="hideLowQuantityAlert()" class="btn btn-danger">Fechar</button>
+	<button id="copy-button" class="btn btn-success">Copiar</button>
+</div>
+<div id="overlay"></div>
+
+	
+  <div id="overlay"></div>
+
+  <div id="add-popup" class="popup">
+    <h2>Adicionar Item</h2>
+    <form id="add-form">
+      <label for="add-name">Nome:</label>
+      <input type="text" id="add-name" class="form-control" required>
+      
+      <label for="add-quantity">Quantidade:</label>
+      <input type="number" id="add-quantity" class="form-control" required>
+			<label for="add-low-quantity">Quantidade de Alerta</label>
+			<input type="number" id="add-low-quantity" class="form-control" required>
+      <label for="add-category">Categoria:</label>
+      <select id="add-category" class="form-select" required>
+        <option value="">Selecione uma categoria</option>
+        <option value="Doces">Doces</option>
+        <option value="Salgados">Salgados</option>
+				<option value="Carnes">Carnes</option>
+				<option value="Temperos">Temperos</option>
+				<option value="Frutas">Frutas</option>
+				<option value="Geleias">Geleias</option>
+				<option value="Conservas">Conservas</option>
+				<option value="Congelados">Congelados</option>
+        <option value="Produtos de Limpeza">Produtos de Limpeza</option>
+        <option value="Bebidas">Bebidas</option>
+        <option value="Gerais">Gerais</option>
+        <option value="Queijos">Queijos</option>
+      </select>
+      
+      <button id="button" type="submit" class="btn btn-success">Adicionar</button>
+      <button type="button" onclick="hideAddPopup()" class="btn btn-danger">Cancelar</button>
+    </form>
+  </div>
+
+  <div id="edit-popup" class="popup">
+    <h2>Editar Item</h2>
+    <form id="edit-form">
+      <label for="edit-name">Nome:</label>
+      <input type="text" id="edit-name" class="form-control" required>
+      
+      <label for="edit-quantity">Quantidade:</label>
+      <input type="number" id="edit-quantity" class="form-control" required>
+      
+      <label for="edit-category">Categoria:</label>
+      <select id="edit-category" class="form-select" required>
+        <option value="">Selecione uma categoria</option>
+        <option value="Doces">Doces</option>
+        <option value="Salgados">Salgados</option>
+				<option value="Carnes">Carnes</option>
+				<option value="Temperos">Temperos</option>
+				<option value="Frutas">Frutas</option>
+				<option value="Geleias">Geleias</option>
+				<option value="Conservas">Conservas</option>
+				<option value="Congelados">Congelados</option>
+        <option value="Produtos de Limpeza">Produtos de Limpeza</option>
+        <option value="Bebidas">Bebidas</option>
+        <option value="Gerais">Gerais</option>
+        <option value="Queijos">Queijos</option>
+      </select>
+      
+      <input type="hidden" id="edit-item-id">
+      
+      <button id="edit-button" type="submit" class="btn btn-success">Salvar</button>
+      <button type="button" onclick="hideEditPopup()" class="btn btn-danger">Cancelar</button>
+    </form>
+  </div>
+
+  <div id="delete-popup" class="popup">
+    <h2>Excluir Item</h2>
+    <p>Tem certeza que deseja excluir este item?</p>
+    <button id="delete-confirm-btn" class="btn btn-danger">Confirmar</button>
+    <button id="delete-cancel-btn" class="btn btn-success" onclick="hideDeletePopup()">Cancelar</button>
+  </div>
+</body>
+</html>
